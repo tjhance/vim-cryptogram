@@ -1,3 +1,35 @@
+highlight link CryptInval Error
+function UpdateHighlighting()
+	let s = []
+	let t = []
+	for key in keys(b:current_mapping)
+		for otherkey in keys(b:current_mapping)
+			if key != otherkey && b:current_mapping[key] == b:current_mapping[otherkey]
+				let s += [key]
+				let t += [b:current_mapping[key]]
+				break
+			endif
+		endfor
+	endfor
+
+    syntax clear CryptInval
+
+	let i = 1
+    while i <= line("$")
+    	let j = 1
+		let l = getline(i)
+    	while j <= len(l)
+    		let c = strpart(l, j-1, 1)
+			if (i % 2 == 1 && index(s, c) != -1) || (i % 2 == 0 && index(t, c) != -1)
+				let reg = "\\%" . i . "l\\%" . j . "c."
+				exec 'syntax match CryptInval "' . reg . '"'
+			endif
+			let j += 1
+    	endwhile
+    	let i += 1
+    endwhile
+endfunction
+
 function Update()
     let lines = getline(1, "$")
     let i = 1
@@ -17,6 +49,7 @@ function Update()
         call setline(i+1, tr(getline(i), codestr, decodestr))
         let i = i + 2
     endwhile
+    call UpdateHighlighting()
 endfunction
 
 function SetMapping(z)
