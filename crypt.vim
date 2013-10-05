@@ -12,58 +12,58 @@ function UpdateHighlighting()
 		endfor
 	endfor
 
-    syntax clear CryptInval
+	syntax clear CryptInval
 
 	let i = 1
-    while i <= line("$")
-    	let j = 1
+	while i <= line("$")
+		let j = 1
 		let l = getline(i)
-    	while j <= len(l)
-    		let c = strpart(l, j-1, 1)
+		while j <= len(l)
+			let c = strpart(l, j-1, 1)
 			if (i % 2 == 1 && index(s, c) != -1) || (i % 2 == 0 && index(t, c) != -1)
 				let reg = "\\%" . i . "l\\%" . j . "c."
 				exec 'syntax match CryptInval "' . reg . '"'
 			endif
 			let j += 1
-    	endwhile
-    	let i += 1
-    endwhile
+		endwhile
+		let i += 1
+	endwhile
 endfunction
 
 function Update()
-    let lines = getline(1, "$")
-    let i = 1
-    let codestr = ""
-    let decodestr = ""
-    for key in keys(b:current_mapping)
-        let codestr = codestr . key
-        let decodestr = decodestr . b:current_mapping[key]
-    endfor
-    for key in ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
-        if !has_key(b:current_mapping, key)
-            let codestr = codestr . key
-            let decodestr = decodestr . "."
-        endif
-    endfor
-    while i <= line("$")
-        call setline(i+1, tr(getline(i), codestr, decodestr))
-        let i = i + 2
-    endwhile
-    call UpdateHighlighting()
+	let lines = getline(1, "$")
+	let i = 1
+	let codestr = ""
+	let decodestr = ""
+	for key in keys(b:current_mapping)
+		let codestr = codestr . key
+		let decodestr = decodestr . b:current_mapping[key]
+	endfor
+	for key in ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+		if !has_key(b:current_mapping, key)
+			let codestr = codestr . key
+			let decodestr = decodestr . "."
+		endif
+	endfor
+	while i <= line("$")
+		call setline(i+1, tr(getline(i), codestr, decodestr))
+		let i = i + 2
+	endwhile
+	call UpdateHighlighting()
 endfunction
 
 function SetMapping(z)
-    let z = tolower(a:z)
-    let cursorpos = getpos(".")
-    let lnum = cursorpos[1]
-    let column = cursorpos[2]
-    let code_lnum = lnum % 2 == 0 ? lnum - 1 : lnum
-    let code_line = getline(code_lnum)
-    if column <= strlen(code_line)
-        let y = tolower(strpart(code_line, column - 1, 1))
-        let b:current_mapping[y] = z
-        call Update()
-    endif
+	let z = tolower(a:z)
+	let cursorpos = getpos(".")
+	let lnum = cursorpos[1]
+	let column = cursorpos[2]
+	let code_lnum = lnum % 2 == 0 ? lnum - 1 : lnum
+	let code_line = getline(code_lnum)
+	if column <= strlen(code_line)
+		let y = tolower(strpart(code_line, column - 1, 1))
+		let b:current_mapping[y] = z
+		call Update()
+	endif
 endfunction
 
 function InitCrypt()
