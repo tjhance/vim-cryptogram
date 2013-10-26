@@ -66,6 +66,45 @@ function SetMapping(z)
 	endif
 endfunction
 
+function ListPossibilities()
+	let cursorpos = getpos(".")
+	let lnum = cursorpos[1]
+	let column = cursorpos[2]
+	let code_lnum = lnum % 2 == 0 ? lnum - 1 : lnum
+	let code_line = getline(code_lnum)
+	if column <= strlen(code_line)
+		call cursor(code_lnum, code_line)
+		let codeword = expand('<cword>')
+		call cursor(lnum, column)
+
+		let formatted_word = ""
+		let i = 0
+		while i < strlen(codeword)
+			let char = codeword[i]
+			let i += 1
+			if has_key(b:current_mapping, char)
+				let formatted_word .= toupper(b:current_mapping[char])
+			else
+				let formatted_word .= char
+			endif
+		endwhile
+		let unmapped = ""
+		for value in ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+			let inrange = 0
+			for key in keys(b:current_mapping)
+				if b:current_mapping[key] == value
+					let inrange = 1
+					break
+				endif
+			endfor
+			if !inrange
+				let unmapped .= value
+			endif
+		endfor
+		exec "!./cryptgrep.py --dict=/home/tjhance/Dropbox/lists/wordlist.ranked --include=" . unmapped . " --inject " . formatted_word . " | less"
+	endif
+endfunction
+
 function InitCrypt()
 	let b:current_mapping = {}
 
@@ -97,6 +136,7 @@ function InitCrypt()
 	nnoremap <buffer> \z :call SetMapping("z")<enter>
 	nnoremap <buffer> \. :call SetMapping(".")<enter>
 	nnoremap <buffer> \\ :call Update()<enter>
+	nnoremap <buffer> \, :call ListPossibilities()<enter>
 endfunction
 
 command Crypt call InitCrypt()
