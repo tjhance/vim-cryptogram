@@ -122,7 +122,8 @@ function ListPossibilities()
 				let unmapped .= value
 			endif
 		endfor
-		exec "!./cryptgrep.py --dict=/home/tjhance/Dropbox/lists/wordlist.ranked --include=" . unmapped . " --inject " . formatted_word . " | less"
+		" I originally had --include=${unmapped} but I want the search to be more inclusive
+		exec "!./cryptgrep.py --dict=/home/tjhance/Dropbox/lists/wordlist.ranked --inject " . formatted_word . " | less"
 	endif
 endfunction
 
