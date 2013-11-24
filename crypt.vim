@@ -52,7 +52,23 @@ function Update()
 	call UpdateHighlighting()
 endfunction
 
+function GetMapping()
+	let line1 = getline("1")
+	let line2 = getline("2")
+	let b:current_mapping = {}
+	let i = 0
+	let minlen = min([strlen(line1), strlen(line2)])
+	while i < minlen
+		if line2[i] != "."
+			let b:current_mapping[line1[i]] = line2[i]
+		endif
+		let i += 1
+	endwhile
+endfunction
+
 function SetMapping(z)
+	call GetMapping()
+	
 	let z = tolower(a:z)
 	let cursorpos = getpos(".")
 	let lnum = cursorpos[1]
@@ -76,6 +92,11 @@ function ListPossibilities()
 		call cursor(code_lnum, code_line)
 		let codeword = expand('<cword>')
 		call cursor(lnum, column)
+
+		if codeword == ""
+			echom "Place your cursor over a word."
+			return
+		endif
 
 		let formatted_word = ""
 		let i = 0
@@ -106,7 +127,10 @@ function ListPossibilities()
 endfunction
 
 function InitCrypt()
-	let b:current_mapping = {}
+	call append("0", "abcdefghijklmnopqrstuvwxyz")
+	call append("1", "..........................")
+	call append("2", "")
+	call append("3", "")
 
 	nnoremap <buffer> \a :call SetMapping("a")<enter>
 	nnoremap <buffer> \b :call SetMapping("b")<enter>
@@ -135,8 +159,9 @@ function InitCrypt()
 	nnoremap <buffer> \y :call SetMapping("y")<enter>
 	nnoremap <buffer> \z :call SetMapping("z")<enter>
 	nnoremap <buffer> \. :call SetMapping(".")<enter>
-	nnoremap <buffer> \\ :call Update()<enter>
-	nnoremap <buffer> \, :call ListPossibilities()<enter>
+	nnoremap <buffer> \\ :call GetMapping()<enter>:call Update()<enter>
+	nnoremap <buffer> \, :call GetMapping()<enter>:call ListPossibilities()<enter>
 endfunction
 
 command Crypt call InitCrypt()
+
