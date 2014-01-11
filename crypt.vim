@@ -1,3 +1,7 @@
+let s:dict_path = "/home/tjhance/Dropbox/lists/wordlist.ranked"
+
+let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
+
 highlight link CryptInval Error
 function UpdateHighlighting()
 	let s = []
@@ -123,7 +127,7 @@ function ListPossibilities()
 			endif
 		endfor
 		" I originally had --include=${unmapped} but I want the search to be more inclusive
-		exec "!./cryptgrep.py --dict=/home/tjhance/Dropbox/lists/wordlist.ranked --inject " . formatted_word . " | less"
+		exec "!" . s:path . "/cryptgrep.py --dict=" . s:dict_path . " --inject " . formatted_word . " | less"
 	endif
 endfunction
 
