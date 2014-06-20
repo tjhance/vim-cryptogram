@@ -1,4 +1,4 @@
-let s:dict_path = "/home/tjhance/Dropbox/lists/dict"
+let s:dict_path = "/usr/share/dict/words"
 
 let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
